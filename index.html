@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="no-referrer" />
+<title>DIGI-FUZE</title>
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<div id="stage"></div>
+
+<!-- All UI lives in this right-hand column: a title box and a controls box. Sections show only when relevant;
+     the TV itself explains how to play. -->
+<div id="side">
+<header id="title-box" class="box">
+  <h1>DIGI-FUZE</h1>
+  <button id="btn-info" class="small" title="What is this?" aria-label="About DIGI-FUZE">?</button>
+</header>
+
+<aside id="panel" class="box">
+  <div id="now" class="section">
+    <p id="status"></p>
+    <button id="btn-fuse" class="primary" hidden>DIGI-FUZE!</button>
+    <button id="btn-build" class="primary" hidden>Build full game</button>
+    <div class="links">
+      <button id="btn-focus" class="link">Full screen</button>
+      <button id="btn-bug" class="link" hidden>Report bug</button>
+    </div>
+  </div>
+
+  <div id="rate" class="section" hidden>
+    <p id="rate-title"></p>
+    <div class="stars" data-k="fun"><span>Fun</span></div>
+    <div class="stars" data-k="fusion"><span>Fusion</span></div>
+  </div>
+
+  <div id="panel-nokey" class="section">
+    <p>To remix two cartridges, add your own API key.</p>
+    <button id="btn-addkey" class="primary">Add API key</button>
+  </div>
+
+  <div id="panel-full" class="section">
+    <div class="panel-head">
+      <span id="conn" class="muted"></span>
+      <button id="btn-settings" class="small">Change</button>
+    </div>
+    <select id="model" aria-label="Model"></select>
+    <select id="effort" aria-label="Effort" title="Effort"></select>
+    <select id="scope" aria-label="Length"><option value="full">20 levels</option><option value="quick">6 levels</option></select>
+    <label id="fast-row" class="check" title="Same model, up to ~2.5x faster, 2x the price">
+      <input type="checkbox" id="fast" /> Fast mode (2x price)
+    </label>
+  </div>
+
+  <div class="row" id="panel-actions">
+    <button id="btn-results">Results</button>
+    <button id="btn-eject">Eject all</button>
+  </div>
+</aside>
+</div>
+
+<section id="info" class="dialog" hidden>
+  <h2>DIGI-FUZE</h2>
+  <p>A retro console where any two cartridges become a new game. An AI model reads both games' code and writes a fusion: first a playable level 1, then the full game if you want it, shaped by your notes.</p>
+  <p class="note">Remixing uses your own Anthropic or OpenRouter API key. It stays in this browser and goes only to that provider. Your remixes are saved in this browser too: use Export to keep or share them.</p>
+  <p class="note">It's also a benchmark: Results compares models on time, tokens, cost and how fun their games are.</p>
+  <p><a href="https://github.com/flomerboy/digi-fuze" target="_blank" rel="noopener">Source and contributing on GitHub</a></p>
+  <div class="row"><button id="info-close">Close</button></div>
+</section>
+
+<section id="build" class="card dialog" hidden>
+  <h2>Build the full game</h2>
+  <p id="build-intro" class="note"></p>
+  <textarea id="build-text" rows="4" placeholder="How was level 1? What should the full game keep, change or add? (optional)&#10;e.g. the snake should grow faster, more paddle power-ups, a boss at the end"></textarea>
+  <div class="row"><button id="build-go" class="primary">Build it</button><button id="build-cancel">Not yet</button></div>
+</section>
+
+<section id="settings" class="card dialog" hidden>
+  <h2>Your API keys</h2>
+  <p class="note">Remixing calls an AI model with <b>your own key</b>. Keys stay in this browser and are sent only to the provider you pick, never to this site. Usage is billed to your account.</p>
+  <div class="provider">
+    <h3>Anthropic <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">get a key</a></h3>
+    <div class="row"><input id="key-anthropic" type="password" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" /><button id="save-anthropic" class="primary">Save</button><button id="forget-anthropic">Forget</button></div>
+    <p class="muted" id="state-anthropic"></p>
+  </div>
+  <div class="provider">
+    <h3>OpenRouter <span class="muted">(Claude plus GPT, Gemini and open models)</span></h3>
+    <div class="row"><button id="connect-openrouter" class="primary">Connect with OpenRouter</button></div>
+    <div class="row"><input id="key-openrouter" type="password" placeholder="or paste sk-or-…" autocomplete="off" spellcheck="false" /><button id="save-openrouter">Save</button><button id="forget-openrouter">Forget</button></div>
+    <p class="muted" id="state-openrouter"></p>
+  </div>
+  <label class="check"><input type="checkbox" id="remember" checked /> Remember keys on this device (otherwise they're forgotten when you close the tab)</label>
+  <p id="settings-msg" class="warn"></p>
+  <div class="row"><button id="settings-close">Done</button></div>
+</section>
+
+<section id="bug" class="card dialog" hidden>
+  <h2>Report a bug</h2>
+  <p id="bug-intro" class="note"></p>
+  <img id="bug-shot" alt="Screenshot of the TV" />
+  <textarea id="bug-text" rows="3" placeholder="What's wrong? e.g. pressing A doesn't retry after losing a match"></textarea>
+  <div class="row"><button id="bug-send" class="primary">Send</button><button id="bug-cancel">Cancel</button></div>
+</section>
+
+<section id="results" hidden>
+  <div class="results-head"><h2>Model results</h2>
+    <div class="row"><button id="btn-import">Import…</button><input id="import-file" type="file" accept=".json,application/json" multiple hidden /><button id="results-close">Close</button></div>
+  </div>
+  <div id="results-body"></div>
+</section>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

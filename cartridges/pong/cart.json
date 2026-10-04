@@ -1,0 +1,8 @@
+{
+  "id": "pong",
+  "title": "PADDLE",
+  "color": "#455a64",
+  "accent": "#eceff1",
+  "tagline": "Two paddles. One ball. Beat the CPU.",
+  "order": 1
+}

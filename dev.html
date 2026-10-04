@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cartridge Bench</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #111; color: #ddd; font: 14px/1.4 ui-monospace, monospace; display: grid; place-items: center; min-height: 100vh; }
+  #wrap { display: grid; gap: 10px; justify-items: center; }
+  canvas { width: 960px; height: 720px; max-width: 100vw; height: auto; aspect-ratio: 4/3; image-rendering: pixelated; background: #000; outline: 1px solid #333; }
+  #err { color: #ff6b6b; white-space: pre-wrap; max-width: 960px; }
+  select, button { font: inherit; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div><select id="pick"></select> <button id="reload">Reload</button> <span id="status"></span></div>
+  <canvas id="screen" width="320" height="240"></canvas>
+  <div>Arrows/WASD = D-pad · J = A · K = B · Enter = START · Shift = SELECT</div>
+  <div id="err"></div>
+</div>
+<script type="module" src="/src/dev.ts"></script>
+</body>
+</html>

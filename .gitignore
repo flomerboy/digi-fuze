@@ -1,0 +1,7 @@
+node_modules
+dist
+remixes/
+.env
+
+exports/
+*.vgremix.json

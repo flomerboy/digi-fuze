@@ -1,0 +1,141 @@
+/* Monochrome pixel UI in one right-hand panel. Everything uses the console's own 5x7 font
+   (src/assets/vgr-pixel.ttf, built by tools/build-font.mjs) at 16px = 2px font pixels, 24px lines.
+   No color, no rounded corners, no blur, nothing thinner than 2px. Selection = inverted. */
+@font-face {
+  font-family: 'VGR Pixel';
+  src: url('./assets/vgr-pixel.ttf') format('truetype');
+  font-display: block;
+}
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --dim: #8c8c8c;
+  --faint: #3a3a3a;
+  --b: 2px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; border-radius: 0 !important; }
+[hidden] { display: none !important; }
+html, body {
+  margin: 0; height: 100%; background: var(--bg); color: var(--fg); overflow: hidden;
+  font: 16px/24px 'VGR Pixel', ui-monospace, monospace;
+  -webkit-font-smoothing: none; font-smooth: never; text-rendering: optimizeSpeed;
+}
+#stage { position: fixed; inset: 0; }
+#stage canvas { display: block; }
+button, select, textarea, input { font: inherit; color: var(--fg); letter-spacing: 0; }
+p { margin: 0; }
+a { color: var(--fg); }
+b { font-weight: normal; text-decoration: underline; text-decoration-thickness: var(--b); text-underline-offset: 4px; }
+::selection { background: var(--fg); color: var(--bg); }
+.muted { color: var(--dim); }
+.note { color: var(--dim); }
+
+/* ---- controls ---- */
+button, select { background: var(--bg); border: var(--b) solid var(--fg); padding: 2px 10px; cursor: pointer; text-align: center; }
+button:hover { background: var(--fg); color: var(--bg); }
+button:active { transform: translate(2px, 2px); }
+:focus-visible { outline: var(--b) dashed var(--fg); outline-offset: 2px; }
+button.primary { background: var(--fg); color: var(--bg); }
+button.primary:hover { background: var(--bg); color: var(--fg); }
+button.danger { border-style: dashed; }
+button.small { padding: 0 8px; }
+select {
+  appearance: none; -webkit-appearance: none; width: 100%; min-width: 0; text-align: left; padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' shape-rendering='crispEdges'%3E%3Cpath fill='%23fff' d='M0 0h10v2H8v2H6v2H4V4H2V2H0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center; background-size: 10px 6px;
+}
+/* only colors change on hover: the `background` shorthand would reset the arrow to a tiled pattern */
+select:hover {
+  background-color: var(--fg); color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' shape-rendering='crispEdges'%3E%3Cpath fill='%23000' d='M0 0h10v2H8v2H6v2H4V4H2V2H0z'/%3E%3C/svg%3E");
+}
+select option, select optgroup { background: var(--bg); color: var(--fg); font: inherit; }
+input[type=text], input[type=password], textarea { background: var(--bg); border: var(--b) solid var(--fg); padding: 2px 8px; width: 100%; min-width: 0; }
+textarea { resize: vertical; }
+::placeholder { color: var(--dim); opacity: 1; }
+input[type=checkbox], input[type=radio] {
+  appearance: none; -webkit-appearance: none; margin: 0; flex: none; width: 16px; height: 16px;
+  border: var(--b) solid var(--fg); background: var(--bg); cursor: pointer; position: relative; top: 3px;
+}
+input[type=checkbox]:checked, input[type=radio]:checked { background: var(--fg); box-shadow: inset 0 0 0 2px var(--bg); }
+.check { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.row { display: flex; gap: 8px; }
+.row > * { flex: 1; min-width: 0; }
+h2, h3 { font: inherit; margin: 0; text-transform: uppercase; }
+
+/* ---- right column: title box + controls box ---- */
+#side { position: fixed; top: 16px; right: 16px; width: 320px; max-height: calc(100vh - 32px); display: grid; gap: 12px; align-content: start; }
+.box { background: var(--bg); border: 4px solid var(--fg); padding: 12px; }
+#title-box { display: flex; justify-content: space-between; align-items: center; }
+#title-box h1 { margin: 0; font: 32px/32px 'VGR Pixel', monospace; }
+#panel { display: grid; overflow: auto; max-height: calc(100vh - 32px - 72px); padding: 0 12px; }
+/* sections are separated by a rule between visible ones (hidden sections use the [hidden] attribute) */
+#panel > * { display: grid; gap: 10px; padding: 12px 0; }
+#panel > .row { display: flex; }
+/* quiet secondary actions: small dim text, underlined on hover */
+.links { display: flex; gap: 16px; }
+button.link { border: 0; padding: 0; background: none; color: var(--dim); }
+button.link:hover { background: none; color: var(--fg); text-decoration: underline; text-decoration-thickness: var(--b); text-underline-offset: 4px; }
+#panel > :not([hidden]) ~ :not([hidden]) { border-top: var(--b) solid var(--fg); }
+.stack { display: grid; gap: 8px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+/* model choices: a plain list; the chosen one is inverted */
+.models { border: 0; padding: 0; margin: 0; display: grid; gap: 0; }
+#panel .models label.model { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; padding: 2px 6px; cursor: pointer; }
+#panel .models label.model:hover { background: var(--faint); }
+#panel .models label.model.on { background: var(--fg); color: var(--bg); }
+#panel .models label.model.on .blurb, #panel .models label.model.on .via { color: var(--bg); }
+#panel .models label.model.on input { border-color: var(--bg); background: var(--bg); box-shadow: inset 0 0 0 2px var(--fg); }
+.models input { grid-row: span 2; }
+.models .blurb, .models .via { color: var(--dim); }
+.models .blurb { grid-column: 2; }
+.models .picked { margin: 4px 0 0; }
+
+/* rating stars */
+.stars { display: flex; align-items: center; }
+.stars span { width: 80px; }
+.stars button { padding: 0 2px; border: 0; background: none; color: var(--faint); font-size: 0; }
+.stars button::before { content: '\2605'; font-size: 32px; line-height: 32px; }
+.stars button.on { color: var(--fg); }
+.stars button:hover { background: none; color: var(--dim); }
+
+/* full-screen TV: only the "now playing" section stays */
+body.focused #panel > :not(#now) { display: none !important; }
+
+/* ---- dialogs ---- */
+section.dialog {
+  position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px); overflow: auto; z-index: 10; padding: 12px; display: grid; gap: 10px;
+  background: var(--bg); border: 4px solid var(--fg);
+}
+section.dialog h3 { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.provider { display: grid; gap: 8px; padding: 10px; border: var(--b) dashed var(--fg); }
+.provider .row input { flex: 1; }
+.warn { min-height: 24px; }
+#bug-shot { width: 100%; image-rendering: pixelated; border: var(--b) solid var(--fg); }
+.badge { border: var(--b) solid currentColor; padding: 0 4px; }
+
+/* ---- results ---- */
+section#results { position: fixed; inset: 32px; padding: 16px; background: var(--bg); border: 4px solid var(--fg); overflow: auto; z-index: 5; }
+.results-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: var(--b) solid var(--fg); padding-bottom: 10px; }
+.totals { margin: 0 0 16px; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+th, td { text-align: left; padding: 4px 10px; border-bottom: var(--b) solid var(--faint); white-space: nowrap; vertical-align: top; }
+th { border-bottom-color: var(--fg); }
+td.ok::before { content: '\2713 '; }
+td.bad::before { content: '\00d7 '; }
+td.title { white-space: normal; min-width: 200px; }
+h3 { margin: 8px 0; }
+td details summary { cursor: pointer; list-style: none; }
+td details summary::before { content: '\25b6 '; }
+td details[open] summary::before { content: '\25bc '; }
+td details ul { margin: 4px 0 0; padding-left: 0; list-style: none; white-space: normal; min-width: 520px; color: var(--dim); }
+td.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  #side { top: auto; bottom: 16px; left: 16px; right: 16px; width: auto; max-height: 60vh; }
+  #panel { max-height: calc(60vh - 72px); }
+  section#results { inset: 16px; }
+}

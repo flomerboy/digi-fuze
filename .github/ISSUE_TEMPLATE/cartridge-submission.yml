@@ -1,0 +1,67 @@
+name: Submit a cartridge
+description: Offer a hand-made cartridge written against the DIGI-FUZE cartridge API.
+title: "[Cartridge] "
+labels: ["cartridge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > **Submissions may never be reviewed or merged.** This is a hobby project. There is no guarantee of a response, a timeline, or that your cartridge will be added.
+
+        Please read [docs/AUTHORING_CARTRIDGES.md](https://github.com/flomerboy/digi-fuze/blob/main/docs/AUTHORING_CARTRIDGES.md) and [docs/CARTRIDGE_API.md](https://github.com/flomerboy/digi-fuze/blob/main/docs/CARTRIDGE_API.md) first. A pull request from a fork works too, and is often easier to review.
+
+  - type: input
+    id: name
+    attributes:
+      label: Cartridge name
+      placeholder: e.g. MOLE PATROL
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What kind of game is it? How do the ~20 levels vary? What are the controls?
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Link to your fork, branch or pull request (optional if you attach the file)
+      placeholder: https://github.com/you/digi-fuze/tree/my-cartridge
+    validations:
+      required: false
+
+  - type: upload
+    id: cartridge_file
+    attributes:
+      label: Cartridge file (optional if you gave a link)
+      description: Attach `game.js` (plus `cart.json` if you made one), or a `.zip` of your `cartridges/<id>/` folder.
+    validations:
+      required: false
+      accept: ".js,.json,.zip,.png"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: It is a single `cartridges/<id>/game.js` that follows docs/CARTRIDGE_API.md (no imports, `export default function boot(api)`).
+          required: true
+        - label: "`npm run smoke -- cartridges/<id>/game.js` passes."
+          required: true
+        - label: It is my own original work. It uses no copyrighted assets and no trademarked names or characters from other games.
+          required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Before you submit
+      options:
+        - label: I understand submissions may never be reviewed or merged, and there is no guarantee of a response.
+          required: true
+        - label: I agree that my submission may be included in this repository under the repository's license (see the LICENSE file).
+          required: true

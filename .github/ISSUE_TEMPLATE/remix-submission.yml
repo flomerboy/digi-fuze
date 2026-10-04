@@ -1,0 +1,110 @@
+name: Submit a remix
+description: Share a game you made by fusing two cartridges in DIGI-FUZE.
+title: "[Remix] "
+labels: ["remix"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > **Submissions may never be reviewed or merged.** This is a hobby project. There is no guarantee of a response, a timeline, or that your remix will be added.
+
+        The easiest way to submit is the **Submit** button in the app. It downloads your `.vgremix.json` file and opens this form with most fields filled in. You just attach the file.
+
+        Never paste your API key anywhere in this form. The exported file does not contain it.
+
+  - type: input
+    id: game_title
+    attributes:
+      label: Game title
+      description: The name of the remixed game.
+      placeholder: e.g. SNAKE BREAKER
+    validations:
+      required: true
+
+  - type: dropdown
+    id: parent_a
+    attributes:
+      label: Parent cartridge A
+      options:
+        - SNAKE
+        - PADDLE
+        - CHESS
+        - BRICKS
+        - ROCKS
+        - SPROUT SHOWER
+        - SPARROW GLIDER
+        - JUMPER
+    validations:
+      required: true
+
+  - type: dropdown
+    id: parent_b
+    attributes:
+      label: Parent cartridge B
+      options:
+        - SNAKE
+        - PADDLE
+        - CHESS
+        - BRICKS
+        - ROCKS
+        - SPROUT SHOWER
+        - SPARROW GLIDER
+        - JUMPER
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model used
+      description: The AI model that wrote the remix.
+      placeholder: e.g. claude-opus-5-5
+    validations:
+      required: true
+
+  - type: textarea
+    id: pitch
+    attributes:
+      label: Pitch
+      description: One or two sentences. What is the game?
+    validations:
+      required: true
+
+  - type: textarea
+    id: why_fun
+    attributes:
+      label: Why it's fun (optional)
+      description: What makes it worth playing? Any favorite level or moment?
+    validations:
+      required: false
+
+  - type: upload
+    id: remix_file
+    attributes:
+      label: Exported remix file
+      description: |
+        Attach the `.vgremix.json` file the app exported (Results > Export, or the Submit button).
+        GitHub accepts `.json` files here. If the upload is rejected, zip the file and attach the `.zip` instead.
+    validations:
+      required: true
+      accept: ".json,.zip,.txt"
+
+  - type: textarea
+    id: stats
+    attributes:
+      label: Stats (optional)
+      description: The app fills this in (model, effort, time, tokens, cost, attempts, ratings). Edit if you like.
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Before you submit
+      options:
+        - label: I understand submissions may never be reviewed or merged, and there is no guarantee of a response.
+          required: true
+        - label: I agree that my submission may be included in this repository under the repository's license (see the LICENSE file).
+          required: true
