@@ -5,6 +5,7 @@ import { runSmoke } from '../runtime/smoke-harness.js';
 import { lockdownWorker } from '../runtime/lockdown';
 
 self.onmessage = async (ev: MessageEvent<{ source: string; frames: number; seed: number }>) => {
+  postMessage({ alive: true }); // tells the page this worker loaded, so later failures are the cartridge's
   const { source, frames, seed } = ev.data;
   const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
   lockdownWorker();

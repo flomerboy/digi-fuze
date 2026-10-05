@@ -151,6 +151,8 @@ async function attemptLoop(meta: RemixMeta, model: ModelInfo, t: Transcript, max
         const smoke = await d.smoke(parsed.code);
         attempt.smoke = smoke;
         d.emit('test', smoke);
+        // The test sandbox itself couldn't start: that's our problem, not the model's. Don't bill a repair for it.
+        if (smoke.phase === 'infra') throw new Error(`${smoke.error} Nothing was sent back to the model. Reload the page and try again.`);
         if (smoke.ok) { finalCode = parsed.code; break; }
         problem = `Phase: ${smoke.phase}\n${smoke.error || 'unknown error'}${smoke.frames ? `\n(after ${smoke.frames} frames of simulated play)` : ''}`;
       }

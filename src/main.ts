@@ -52,12 +52,13 @@ const host = new CartHost(synth, input, {
   onFrame(bitmap) { if (mode === 'game') screen.frame(bitmap); bitmap.close(); },
   onLog(line) { note(`log: ${line.slice(0, 200)}`); },
   onError(e) {
+    const loadFailure = e.phase === 'load'; // the runtime didn't load: nothing for the model to fix
     crashInfo = {
-      title: 'CARTRIDGE ERROR',
-      msg: `[${e.phase}] ${e.message}\n\n${(e.stack || '').split('\n').slice(0, 8).join('\n')}`,
-      hint: currentRemix ? 'PRESS START TO ASK THE MODEL TO FIX IT  -  OR EJECT A CARTRIDGE' : 'EJECT AND REINSERT THE CARTRIDGE',
+      title: loadFailure ? 'COULD NOT LOAD' : 'CARTRIDGE ERROR',
+      msg: loadFailure ? e.message : `[${e.phase}] ${e.message}\n\n${(e.stack || '').split('\n').slice(0, 8).join('\n')}`,
+      hint: loadFailure ? 'RELOAD THE PAGE' : currentRemix ? 'PRESS START TO ASK THE MODEL TO FIX IT  -  OR EJECT A CARTRIDGE' : 'EJECT AND REINSERT THE CARTRIDGE',
     };
-    lastCrash = `[${e.phase}] ${e.message}\n${e.stack || ''}`;
+    lastCrash = loadFailure ? '' : `[${e.phase}] ${e.message}\n${e.stack || ''}`;
     note(`crash: ${e.message}`);
     mode = 'crash';
     $('#btn-bug').hidden = true;
@@ -649,7 +650,7 @@ window.addEventListener('keydown', (e) => {
   if (mode === 'fusion' && (e.code === 'Enter' || e.code === 'KeyJ' || e.code === 'Space' || e.code === 'KeyZ')) { e.preventDefault(); fireFusion(); return; }
   if (e.code === 'Escape') { setFocus(false); $('#results').hidden = true; $('#settings').hidden = true; $('#info').hidden = true; closeBug(); closeBuild(); }
   if (e.code === 'KeyF') setFocus(world.focusTarget < 0.5);
-  if (e.code === 'Enter' && mode === 'crash' && currentRemix) void startFix(currentRemix, 'crash-fix', { text: lastCrash });
+  if (e.code === 'Enter' && mode === 'crash' && currentRemix && lastCrash) void startFix(currentRemix, 'crash-fix', { text: lastCrash });
 });
 
 function setFocus(on: boolean) {

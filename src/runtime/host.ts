@@ -37,7 +37,14 @@ export class CartHost {
     const w = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
     this.worker = w;
     w.onmessage = (e) => this.onMessage(e.data);
-    w.onerror = (e) => this.crash({ phase: 'worker', message: e.message || 'Worker error' });
+    // Before 'ready', a message-less error means the runtime itself didn't load (stale page, dev server gone): not
+    // the cartridge's fault. After 'ready', it usually means the cartridge exhausted memory.
+    w.onerror = (e) => {
+      e.preventDefault();
+      this.crash(this.ready || e.message
+        ? { phase: 'worker', message: e.message || 'The cartridge crashed its sandbox without an error message (usually it ran out of memory, e.g. a loop that keeps growing an array, or endless recursion).' }
+        : { phase: 'load', message: "The game runtime couldn't load. Reload the page (if you're running locally, check the dev server is still up)." });
+    };
     w.postMessage({ type: 'load', source, storage });
     this.running = true;
     this.ready = false;
