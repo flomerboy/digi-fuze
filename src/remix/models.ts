@@ -13,6 +13,7 @@ export const ANTHROPIC_MODELS: ModelInfo[] = [
   claude('claude-opus-5-5', 'Claude Opus 5.5', [4, 20], { featured: true, fast: true, blurb: 'Best balance' }),
   claude('claude-sonnet-5-5', 'Claude Sonnet 5.5', [2, 10], { featured: true, blurb: 'Cheaper, quicker' }),
   claude('claude-fable-5-1', 'Claude Fable 5.1', [10, 50], { featured: true, blurb: 'Most capable, priciest' }),
+  claude('claude-haiku-5-5', 'Claude Haiku 5.5', [0.1, 0.5]),
   claude('claude-opus-5', 'Claude Opus 5', [5, 25], { fast: true }),
   claude('claude-sonnet-5', 'Claude Sonnet 5', [2, 10]),
   claude('claude-opus-4-8', 'Claude Opus 4.8', [5, 25], { fast: true }),
